@@ -1,17 +1,16 @@
 package ru.practikum.teamonesolution.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ru.practikum.teamonesolution.client.ProgrammerDayClient;
 import ru.practikum.teamonesolution.models.Team;
-import ru.practikum.teamonesolution.service.TaskService;
 import ru.practikum.teamonesolution.service.TeamService;
 
-import javax.validation.Valid;
 
 @Slf4j
 @RestController
@@ -19,9 +18,15 @@ import javax.validation.Valid;
 @AllArgsConstructor
 public class TeamController {
     private TeamService teamService;
+    private ProgrammerDayClient programmerDayClient;
 
     @PostMapping("/register")
     public Team register(@RequestBody Team team) {
         return teamService.createTeam(team);
+    }
+
+    @GetMapping("/task")
+    public String add(@RequestBody String data) {
+        return programmerDayClient.register(data, "/teams/register");
     }
 }

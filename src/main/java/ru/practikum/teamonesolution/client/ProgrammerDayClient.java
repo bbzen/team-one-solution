@@ -1,6 +1,7 @@
 package ru.practikum.teamonesolution.client;
 
 import com.google.gson.Gson;
+import org.springframework.stereotype.Component;
 import ru.practikum.teamonesolution.models.Task;
 import ru.practikum.teamonesolution.service.TaskService;
 import ru.practikum.teamonesolution.service.Util;
@@ -11,20 +12,17 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+@Component
 public class ProgrammerDayClient {
     private String apiToken;
-    private final String url;
-    private final HttpClient client;
+    private final String url = "http://localhost:8080";
+    private final HttpClient client = HttpClient.newHttpClient();
     private final TaskService taskService = new TaskService();
     private final Gson gson = Util.getGson();
 
-    public ProgrammerDayClient(String url) {
-        this.url = url;
-        client = HttpClient.newHttpClient();
-    }
-
-    public String register(String data) {
-        HttpRequest request = HttpRequest.newBuilder(URI.create(url)).build();
+    public String register(String data, String endPoint) {
+        HttpRequest request = HttpRequest.newBuilder(URI.create(url + endPoint)).POST(
+                HttpRequest.BodyPublishers.ofString(data)).header("Content-Type", "application/json").build();
 
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -34,6 +32,7 @@ public class ProgrammerDayClient {
             String body = response.body();
             Task task = gson.fromJson(body, Task.class);
             taskService.add(task);
+            apiToken = task.getApiToken();
             return body;
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException("Execution problem was not resolved", e.getCause());
