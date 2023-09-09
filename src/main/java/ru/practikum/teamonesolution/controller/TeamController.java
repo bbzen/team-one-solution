@@ -1,6 +1,8 @@
 package ru.practikum.teamonesolution.controller;
 
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
@@ -13,13 +15,12 @@ import javax.validation.Valid;
 @Slf4j
 @RestController
 @RequestMapping("/teams")
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class TeamController {
     private TeamService teamService;
 
     @PostMapping("/register")
-    public Team register() {
-        Team team = teamService.createTeam();
-        return team;
+    public Team register(@RequestBody Team team) {
+        return teamService.createTeam(team);
     }
 }

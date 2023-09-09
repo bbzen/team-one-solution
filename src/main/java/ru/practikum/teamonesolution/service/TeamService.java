@@ -7,13 +7,13 @@ import ru.practikum.teamonesolution.Storage.ParticipantStorage;
 import ru.practikum.teamonesolution.models.Participant;
 import ru.practikum.teamonesolution.models.Team;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @AllArgsConstructor
 public class TeamService {
     private ParticipantStorage participantStorage;
+    private final Team team = new Team();
 
 
     public Participant add(Participant participant) {
@@ -24,18 +24,11 @@ public class TeamService {
         return participantStorage.getAll();
     }
 
-    public Team createTeam() {
-        Participant Lyagushin = new Participant("a.lyagushin@yandex.ru", "java_28", "Aleksandr", "Lyagushin");
-        Participant Kalyghnii = new Participant("kalyghnii@yandex.ru", "java_29", "Aleksandr", "Kalyghnii");
-        Participant Derendyaev = new Participant("dimonsterus007@yandex.ru", "java_30", "Dmitrii", "Derendyaev");
-        Participant Gagarin = new Participant("gagarin.sn@yandex.ru", "java_23", "Stas", "Gagarin");
-        participantStorage.add(Lyagushin);
-        participantStorage.add(Kalyghnii);
-        participantStorage.add(Gagarin);
-        participantStorage.add(Derendyaev);
-        return new Team(
-                "Слабоумие и отвага",
-                "https://github.com/bbzen/team-one-solution",
-                participantStorage.getAll());
+    public Team createTeam(Team team) {
+        this.team.setName(team.getName());
+        this.team.setGitHubUrl(team.getGitHubUrl());
+        this.team.setParticipants(team.getParticipants());
+        return team;
     }
+
 }

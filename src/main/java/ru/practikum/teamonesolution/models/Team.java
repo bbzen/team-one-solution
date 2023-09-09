@@ -2,12 +2,13 @@ package ru.practikum.teamonesolution.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class Team {
     @NotNull
     private String name;

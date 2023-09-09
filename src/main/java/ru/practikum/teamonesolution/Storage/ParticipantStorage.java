@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-@AllArgsConstructor
 public class ParticipantStorage {
     private final List<Participant> participants = new ArrayList<>();
 
