@@ -5,26 +5,25 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import ru.practikum.teamonesolution.models.Participant;
 import ru.practikum.teamonesolution.models.Team;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SpringBootApplication
 public class TeamOneSolutionApplication {
 
 	public static void main(String[] args) {
 
-		Participant participant = new Participant()
+		Participant Lyagushin = new Participant("a.lyagushin@yandex.ru", "java_28", "Aleksandr", "Lyagushin");
+		Participant Kalyghnii = new Participant("kalyghnii@yandex.ru", "java_29", "Aleksandr", "Kalyghnii");
+		Participant Derendyaev = new Participant("dimonsterus007@yandex.ru", "java_30", "Dmitrii", "Derendyaev");
+		Participant Gagarin = new Participant("gagarin.sn@yandex.ru", "java_23", "Stas", "Gagarin");
 
-		Team team = new Team();
+		ArrayList<Participant> participants = new ArrayList<>(List.of(Lyagushin, Kalyghnii, Derendyaev, Gagarin));
+		Team team = new Team("Слабоумие и отвага", "https://github.com/bbzen/team-one-solution", participants);
 
 
 		SpringApplication.run(TeamOneSolutionApplication.class, args);
 
-		/*{"name": "Слабоумие и отвага",
-				"gitHubUrl":"https://github.com/bbzen/team-one-solution",
-				"participants": [
-			{"email": "a.lyagushin@yandex.ru", "cohort": "java_28", "firstName": "Aleksandr", "lastName":"Lyagushin"},
-			{"email": "kalyghnii@yandex.ru", "cohort": "java_29", "firstName": "Aleksandr", "lastName":"Kalyghnii"},
-			{"email": "dimonsterus007@yandex.ru", "cohort": "java_30", "firstName": "Dmitrii", "lastName":"Derendyaev"},
-			{"email": "gagarin.sn@yandex.ru", "cohort": "java_23", "firstName": "Stas", "lastName":"Gagarin"}
-]}*/
 	}
 
 }
