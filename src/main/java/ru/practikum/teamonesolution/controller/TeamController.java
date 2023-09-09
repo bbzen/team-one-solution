@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import ru.practikum.teamonesolution.models.Team;
 import ru.practikum.teamonesolution.service.TeamService;
 
+import javax.validation.Valid;
+
 @Slf4j
 @RestController
 @RequestMapping("/teams")
@@ -16,7 +18,7 @@ public class TeamController {
     private TeamService teamService;
 
     @PostMapping("/register")
-    public Team register(Team team) {
-        return team;
+    public Team register() {
+        return teamService.createTeam();
     }
 }
