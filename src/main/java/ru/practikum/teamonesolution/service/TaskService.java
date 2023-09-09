@@ -8,7 +8,7 @@ import ru.practikum.teamonesolution.models.Task;
 @Service
 @RequiredArgsConstructor
 public class TaskService {
-    private TasksStorage tasksStorage;
+    private TasksStorage tasksStorage = new TasksStorage();
 
     public Task add(Task task) {
         tasksStorage.add(task);

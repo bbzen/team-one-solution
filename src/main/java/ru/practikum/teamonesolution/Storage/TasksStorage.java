@@ -1,9 +1,11 @@
 package ru.practikum.teamonesolution.Storage;
 
+import org.springframework.stereotype.Component;
 import ru.practikum.teamonesolution.models.Task;
 
 import java.util.HashMap;
 import java.util.Map;
+
 
 public class TasksStorage {
     private int uniqueId;

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import lombok.extern.slf4j.Slf4j;
 import ru.practikum.teamonesolution.client.ProgrammerDayClient;
+import ru.practikum.teamonesolution.models.Task;
 import ru.practikum.teamonesolution.models.Team;
 import ru.practikum.teamonesolution.service.TeamService;
 
@@ -21,8 +22,8 @@ public class TeamController {
     private ProgrammerDayClient programmerDayClient;
 
     @PostMapping("/register")
-    public Team register(@RequestBody Team team) {
-        return teamService.createTeam(team);
+    public Task register(@RequestBody Team team) {
+        return new Task().setTeamName("WTF").setApiToken("sldkfj").setNextTaskUrl("sjkdf");
     }
 
     @GetMapping("/task")
