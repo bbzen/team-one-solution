@@ -19,6 +19,7 @@ public class TeamController {
 
     @PostMapping("/register")
     public Team register() {
-        return teamService.createTeam();
+        Team team = teamService.createTeam();
+        return team;
     }
 }

@@ -1,10 +1,15 @@
 package ru.practikum.teamonesolution.Storage;
 
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import ru.practikum.teamonesolution.models.Participant;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
+@AllArgsConstructor
 public class ParticipantStorage {
     private final List<Participant> participants = new ArrayList<>();
 
