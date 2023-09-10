@@ -3,8 +3,8 @@ package ru.practikum.teamonesolution.client;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.practikum.teamonesolution.Storage.TasksStorage;
 import ru.practikum.teamonesolution.models.Task;
+import ru.practikum.teamonesolution.service.Decoder;
 import ru.practikum.teamonesolution.service.TaskService;
 import ru.practikum.teamonesolution.service.Util;
 
@@ -18,13 +18,15 @@ import java.net.http.HttpResponse;
 @RequiredArgsConstructor
 public class ProgrammerDayClient {
     private String apiToken;
-    private final String url = "http://localhost:8080";
+    private final String url = "http://ya.praktikum.fvds.ru:8080/dev-day/task/2";
     private final HttpClient client= HttpClient.newHttpClient();
     private final TaskService taskService;
     private final Gson gson = Util.getGson();
 
-    public String register(String data) {
-        HttpRequest request = HttpRequest.newBuilder(URI.create(url)).build();
+    public String register() {
+        HttpRequest request = HttpRequest.newBuilder(URI.create(url))
+                .header("AUTH_TOKEN", "d63cf677-33fb-4e3a-991f-526165c2973d")
+                .GET().build();
 
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -32,7 +34,7 @@ public class ProgrammerDayClient {
                 throw new RuntimeException("Smth went wrong");
             }
             String body = response.body();
-            Task task = gson.fromJson(body, Task.class);
+            String decoded = Decoder.decode(body, )
             taskService.add(task);
             return body;
         } catch (IOException | InterruptedException e) {
