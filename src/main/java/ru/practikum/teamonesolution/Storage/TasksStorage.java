@@ -9,9 +9,10 @@ public class TasksStorage {
     private int uniqueId;
     private final Map<Integer, Task> tasks = new HashMap<>();
 
-    public void add(Task task) {
+    public Task add(Task task) {
         task.setId(generateId());
         tasks.put(uniqueId, task);
+        return task;
     }
 
     public Task getById(int id) {

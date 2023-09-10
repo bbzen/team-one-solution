@@ -1,6 +1,9 @@
 package ru.practikum.teamonesolution.client;
 
 import com.google.gson.Gson;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import ru.practikum.teamonesolution.Storage.TasksStorage;
 import ru.practikum.teamonesolution.models.Task;
 import ru.practikum.teamonesolution.service.TaskService;
 import ru.practikum.teamonesolution.service.Util;
@@ -11,17 +14,14 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+@Component
+@RequiredArgsConstructor
 public class ProgrammerDayClient {
     private String apiToken;
-    private final String url;
-    private final HttpClient client;
-    private final TaskService taskService = new TaskService();
+    private final String url = "http://localhost:8080";
+    private final HttpClient client= HttpClient.newHttpClient();
+    private final TaskService taskService;
     private final Gson gson = Util.getGson();
-
-    public ProgrammerDayClient(String url) {
-        this.url = url;
-        client = HttpClient.newHttpClient();
-    }
 
     public String register(String data) {
         HttpRequest request = HttpRequest.newBuilder(URI.create(url)).build();
