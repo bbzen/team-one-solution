@@ -15,6 +15,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -25,7 +26,7 @@ public class ProgrammerDayClient {
     private final HttpClient client= HttpClient.newHttpClient();
    // private final TaskService taskService;
     private final Gson gson = Util.getGson();
-    String regex = "(<code id=\"message\"><span>{&quot;encoded&quot;: &quot;).+";
+    private final String regex = "<code id=\"message\"><span>\\{&quot;encoded&quot;:\\s*&quot;(.+?)&quot;,\\s*&quot;offset&quot;:\\s*&quot;(\\d+)&quot;\\}</span></code>";
 
     public String register() {
         HttpRequest request = HttpRequest.newBuilder(URI.create(url))
@@ -35,17 +36,22 @@ public class ProgrammerDayClient {
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != 200) {
-                throw new RuntimeException("Smth went wrong");
+                throw new RuntimeException("Something went wrong");
             }
             String body = response.body();
-            Pattern rowData = Pattern.compile(body);
-            List<String> parsed = rowData.matcher(regex)
-                    .results()
-                    .map(matcher -> matcher.group(0))
-                    .collect(Collectors.toList());
-            Task1Model task = gson.fromJson(parsed.get(0), Task1Model.class);
-            String decoded = Decoder.decode(task.getEncoded(), task.getOffset());
-            return decoded;
+
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(body);
+
+            if (matcher.find()) {
+                String encoded = matcher.group(1);
+                int offset = Integer.parseInt(matcher.group(2));
+
+                String decoded = Decoder.decode(encoded, offset);
+                return decoded;
+            } else {
+                throw new RuntimeException("JSON not found in HTML.");
+            }
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException("Execution problem was not resolved", e.getCause());
         }
