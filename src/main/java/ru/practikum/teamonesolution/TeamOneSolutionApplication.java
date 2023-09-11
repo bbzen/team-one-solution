@@ -11,56 +11,68 @@ import ru.practikum.teamonesolution.service.Decoder;
 import java.security.KeyPair;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @SpringBootApplication
 public class TeamOneSolutionApplication {
 
     public static void main(String[] args) {
-        char[] chars = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'a', 'B', 'b', 'C', 'c', 'D', 'd', 'E', 'e', 'F', 'f'};
+        String[] chars = new String[]{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D",
+                "E", "F", "a", "b", "c", "d", "e", "f"};
         int[] pass = new int[]{21, 21, 21, 21, 21, 21, 21, 21};
-        String[] first = new String[2147483647];
-
-        System.out.println(generateCombinations(pass, chars));
+        ProgrammerDayClient programmerDayClient = new ProgrammerDayClient();
+        System.out.println(generateCombinations(chars, programmerDayClient));
 
     }
 
 
+    public static Password generateCombinations(String[] chars, ProgrammerDayClient programmerDayClient) {
 
-    public static Password generateCombinations(char[] chars) {
-        ProgrammerDayClient programmerDayClient = new ProgrammerDayClient();
         Password password = new Password();
-
+        StringBuilder builder = new StringBuilder();
+        int minSize = 8;
         int status = 0;
-        int sign = 7;
-        boolean signChanged = false;
-        int[] pass = new int[8];
-        for (int i = 0; i < 7; i++) {
-            pass[i] = 22;
+        boolean isLess = false;
+
+        for (int i = 0; i <= 8; i++) {
+            builder.append(0);
+            String data = "{\"password\": \"" + builder + "\"}";
+            password = programmerDayClient.getTask(data);
+            if (isPromptGreaterThan(password.getJson())) {
+                builder.delete(i, i + 1);
+                break;
+            }
         }
 
-        while (status != 200) {
-
-            for (int i = 0; i < 7; i++) {
-                Map<Boolean, Integer> cross = Map.of(true, 0, false, 21);
-                int left = 0;
-                int right = 21;
-
-
-                while (cross.get(true) - 1 == cross.get(false)) {
-                    int middle = left + (right - left) / 2;
-                    pass[i] = middle;
-                    String newPass = null;
-                    for (int k = 0; k < 7; k++) {
-                        StringBuilder builder = new StringBuilder();
-                        builder.append(chars[k]);
-                        newPass = builder.toString();
+        for (int i = 0; i < builder.length(); i++) {
+            boolean isFound = false;
+            int left = 0;
+            int right = 21;
+            while (!isFound) {
+                int middle = (left + right) / 2;
+                builder.replace(i, i + 1, chars[middle]);
+                String data = "{\"password\": \"" + builder + "\"}";
+                password = programmerDayClient.getTask(data);
+                if (password.getStatus() == 200) {
+                    return password;
+                }
+                if (isPromptGreaterThan(password.getJson())) {
+                    right = middle;
+                } else {
+                    left = middle;
+                    builder.replace(i, i + 1, chars[middle + 1]);
+                    String data1 = "{\"password\": \"" + builder + "\"}";
+                    password = programmerDayClient.getTask(data1);
+                    if (password.getStatus() == 200) {
+                        return password;
                     }
-                    String dataToSend = "{\"password\": \"" + newPass + "\"}";
-                    password = programmerDayClient.getTask(dataToSend);
+                    if (isPromptGreaterThan(password.getJson())) {
+                        isFound = true;
+                    }
                 }
             }
-
         }
+
         return password;
     }
 

@@ -28,4 +28,13 @@ public class Password {
     public void setStatus(int status) {
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        return "Password{" +
+                "json='" + json + '\'' +
+                ", message='" + message + '\'' +
+                ", status=" + status +
+                '}';
+    }
 }
