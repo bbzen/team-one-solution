@@ -1,17 +1,11 @@
 package ru.practikum.teamonesolution;
 
 import com.google.gson.Gson;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import ru.practikum.teamonesolution.client.ProgrammerDayClient;
 import ru.practikum.teamonesolution.models.BadResponse;
 import ru.practikum.teamonesolution.models.Password;
-import ru.practikum.teamonesolution.service.Decoder;
 
-import java.security.KeyPair;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 @SpringBootApplication
 public class TeamOneSolutionApplication {
