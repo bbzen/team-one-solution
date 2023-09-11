@@ -11,9 +11,12 @@ public class TeamOneSolutionApplication {
 	public static void main(String[] args) {
 
 		ProgrammerDayClient programmerDayClient = new ProgrammerDayClient();
-		String dataToSend = programmerDayClient.register();
-		System.out.println(programmerDayClient.getTask(dataToSend));
 
+		String income = programmerDayClient.register();
+		String data = "{\"decoded\": \"" + income + "\"}";
+		System.out.println(data);
+		String task = programmerDayClient.getTask(data);
+		System.out.println(task);
 	}
 
 }

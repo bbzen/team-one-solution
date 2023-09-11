@@ -60,13 +60,15 @@ public class ProgrammerDayClient {
     public String getTask(String data) {
         HttpRequest request = HttpRequest.newBuilder(URI.create(url))
                 .header("AUTH_TOKEN", "d63cf677-33fb-4e3a-991f-526165c2973d")
+                .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(data)).build();
 
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() != 200) {
-                throw new RuntimeException("Smth went wrong");
-            }
+            System.out.println(response.statusCode());
+//            if (response.statusCode() != 200) {
+//                throw new RuntimeException("Smth went wrong");
+//            }
             String body = response.body();
             return body;
         } catch (IOException | InterruptedException e) {
