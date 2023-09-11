@@ -3,6 +3,7 @@ package ru.practikum.teamonesolution.client;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import ru.practikum.teamonesolution.models.Password;
 import ru.practikum.teamonesolution.models.Task;
 import ru.practikum.teamonesolution.models.Task1Model;
 import ru.practikum.teamonesolution.service.Decoder;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 @Component
 public class ProgrammerDayClient {
     private String apiToken;
-    private final String url = "http://ya.praktikum.fvds.ru:8080/dev-day/task/2";
+    private final String url = "http://ya.praktikum.fvds.ru:8080/dev-day/task/3";
     private final HttpClient client= HttpClient.newHttpClient();
    // private final TaskService taskService;
     private final Gson gson = Util.getGson();
@@ -57,7 +58,8 @@ public class ProgrammerDayClient {
         }
     }
 
-    public String getTask(String data) {
+    public Password getTask(String data) {
+        Password password = new Password();
         HttpRequest request = HttpRequest.newBuilder(URI.create(url))
                 .header("AUTH_TOKEN", "d63cf677-33fb-4e3a-991f-526165c2973d")
                 .header("Content-Type", "application/json")
@@ -66,11 +68,12 @@ public class ProgrammerDayClient {
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             System.out.println(response.statusCode());
-//            if (response.statusCode() != 200) {
-//                throw new RuntimeException("Smth went wrong");
-//            }
-            String body = response.body();
-            return body;
+            if (response.statusCode() == 200) {
+                password.setJson(response.body());
+                password.setStatus(response.statusCode());
+            }
+
+            return password;
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException("Execution problem was not resolved", e.getCause());
         }
