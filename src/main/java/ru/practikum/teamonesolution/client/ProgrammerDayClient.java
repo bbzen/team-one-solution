@@ -68,10 +68,8 @@ public class ProgrammerDayClient {
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             System.out.println(response.statusCode());
-            if (response.statusCode() == 200) {
-                password.setJson(response.body());
-                password.setStatus(response.statusCode());
-            }
+            password.setStatus(response.statusCode());
+            password.setJson(response.body());
 
             return password;
         } catch (IOException | InterruptedException e) {
