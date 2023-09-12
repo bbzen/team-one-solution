@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import ru.practikum.teamonesolution.client.ProgrammerDayClient;
 import ru.practikum.teamonesolution.models.BadResponse;
-import ru.practikum.teamonesolution.models.Password;
+import ru.practikum.teamonesolution.models.Answer;
 
 
 @SpringBootApplication
@@ -15,20 +15,19 @@ public class TeamOneSolutionApplication {
                 "E", "F", "a", "b", "c", "d", "e", "f"};
         ProgrammerDayClient programmerDayClient = new ProgrammerDayClient();
         System.out.println(generateCombinations(chars, programmerDayClient));
-
     }
 
 
-    public static Password generateCombinations(String[] chars, ProgrammerDayClient programmerDayClient) {
+    public static Answer generateCombinations(String[] chars, ProgrammerDayClient programmerDayClient) {
 
-        Password password = new Password();
+        Answer answer = new Answer();
         StringBuilder builder = new StringBuilder();
 
         for (int i = 0; i <= 8; i++) {
             builder.append(0);
-            String data = "{\"password\": \"" + builder + "\"}";
-            password = programmerDayClient.getTask(data);
-            if (isPromptGreaterThan(password.getJson())) {
+            String data = "{\"answer\": \"" + builder + "\"}";
+            answer = programmerDayClient.getTask(data);
+            if (isPromptGreaterThan(answer.getJson())) {
                 builder.delete(i, i + 1);
                 break;
             }
@@ -41,29 +40,29 @@ public class TeamOneSolutionApplication {
             while (!isFound) {
                 int middle = (left + right) / 2;
                 builder.replace(i, i + 1, chars[middle]);
-                String data = "{\"password\": \"" + builder + "\"}";
-                password = programmerDayClient.getTask(data);
-                if (password.getStatus() == 200) {
-                    return password;
+                String data = "{\"answer\": \"" + builder + "\"}";
+                answer = programmerDayClient.getTask(data);
+                if (answer.getStatus() == 200) {
+                    return answer;
                 }
-                if (isPromptGreaterThan(password.getJson())) {
+                if (isPromptGreaterThan(answer.getJson())) {
                     right = middle;
                 } else {
                     left = middle;
                     builder.replace(i, i + 1, chars[middle + 1]);
-                    String data1 = "{\"password\": \"" + builder + "\"}";
-                    password = programmerDayClient.getTask(data1);
-                    if (password.getStatus() == 200) {
-                        return password;
+                    String data1 = "{\"answer\": \"" + builder + "\"}";
+                    answer = programmerDayClient.getTask(data1);
+                    if (answer.getStatus() == 200) {
+                        return answer;
                     }
-                    if (isPromptGreaterThan(password.getJson())) {
+                    if (isPromptGreaterThan(answer.getJson())) {
                         isFound = true;
                     }
                 }
             }
         }
 
-        return password;
+        return answer;
     }
 
     private static boolean isPromptGreaterThan(String json) {

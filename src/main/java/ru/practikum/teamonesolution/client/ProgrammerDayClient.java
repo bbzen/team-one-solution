@@ -1,13 +1,9 @@
 package ru.practikum.teamonesolution.client;
 
 import com.google.gson.Gson;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.practikum.teamonesolution.models.Password;
-import ru.practikum.teamonesolution.models.Task;
-import ru.practikum.teamonesolution.models.Task1Model;
+import ru.practikum.teamonesolution.models.Answer;
 import ru.practikum.teamonesolution.service.Decoder;
-import ru.practikum.teamonesolution.service.TaskService;
 import ru.practikum.teamonesolution.service.Util;
 
 import java.io.IOException;
@@ -15,6 +11,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -58,8 +55,30 @@ public class ProgrammerDayClient {
         }
     }
 
-    public Password getTask(String data) {
-        Password password = new Password();
+    public Answer sendAnswer(String data) {
+        Answer answer = new Answer();
+        HttpRequest request = HttpRequest.newBuilder(URI.create(url))
+                .header("AUTH_TOKEN", "d63cf677-33fb-4e3a-991f-526165c2973d")
+                .POST(HttpRequest.BodyPublishers.ofString(data)).build();
+
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() != 200) {
+                throw new RuntimeException("Something went wrong");
+            }
+            String body = response.body();
+            answer.setStatus(response.statusCode());
+            answer.setJson(body);
+
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException("Execution problem was not resolved", e.getCause());
+        }
+        return answer;
+    }
+
+    public Answer getTask(String data) {
+        Answer answer = new Answer();
+        String encoded = null;
         HttpRequest request = HttpRequest.newBuilder(URI.create(url))
                 .header("AUTH_TOKEN", "d63cf677-33fb-4e3a-991f-526165c2973d")
                 .header("Content-Type", "application/json")
@@ -68,36 +87,21 @@ public class ProgrammerDayClient {
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             System.out.println(response.statusCode());
-            password.setStatus(response.statusCode());
-            password.setJson(response.body());
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(response.body());
 
-            return password;
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException("Execution problem was not resolved", e.getCause());
-        }
-    }
-
-    public String getTask1(String data) {
-        Pattern rowData = Pattern.compile(data);
-        List<String> parsed = rowData.matcher(regex)
-                .results()
-                .map(matcher -> matcher.group(0))
-                .collect(Collectors.toList());
-        HttpRequest request = HttpRequest.newBuilder(URI.create(url))
-                .header("AUTH_TOKEN", "d63cf677-33fb-4e3a-991f-526165c2973d")
-                .POST(HttpRequest.BodyPublishers.ofString(data)).build();
-
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() != 200) {
-                throw new RuntimeException("Smth went wrong");
+            if (matcher.find()) {
+                encoded = matcher.group(1);
+            } else {
+                throw new RuntimeException("JSON not found in HTML.");
             }
+            answer.setJson(encoded);
 
-            String body = response.body();
-            return body;
+
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException("Execution problem was not resolved", e.getCause());
         }
+        return answer;
     }
 
 }

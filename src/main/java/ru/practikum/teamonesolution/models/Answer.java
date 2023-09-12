@@ -1,6 +1,6 @@
 package ru.practikum.teamonesolution.models;
 
-public class Password {
+public class Answer {
     String json;
     String message;
     int status;
