@@ -3,6 +3,7 @@ package ru.practikum.teamonesolution.client;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -57,27 +58,54 @@ public class ServerRequester {
     }
 
     private String decodeValue(String encodedValue) {
+//        encodedValue = encodedValue.replaceAll("[^A-Za-z0-9+/=]", "");
+
+//        byte[] encodedBytes = Base64.getDecoder().decode(encodedValue);
+//        byte[] encodedBytes = encodedValue.getBytes();
+
         // Массив наиболее распространенных кодировок для проверки
-        Charset[] charsetsToCheck = {StandardCharsets.UTF_8, StandardCharsets.ISO_8859_1, Charset.forName("Windows-1251")}; // и другие кодировки по необходимости
+        Charset[] charsetsToCheck = {
+                StandardCharsets.UTF_8,
+                StandardCharsets.ISO_8859_1,
+                Charset.forName("Windows-1251"),
+                Charset.forName("UTF-16"),
+                Charset.forName("ISO-8859-5"),
+                Charset.forName("US-ASCII"),
+                Charset.forName("UTF-16LE"),
+                Charset.forName("UTF-16BE"),
+                Charset.forName("UTF-32"),
+                Charset.forName("UTF-32LE"),
+                Charset.forName("UTF-32BE"),
+                Charset.forName("KOI8-R"),
+                // Добавьте другие кодировки по необходимости
+        };
 
         for (Charset charset : charsetsToCheck) {
+            byte[] byteArray = encodedValue.getBytes(charset);
             try {
-                byte[] decodedBytes = Base64.getDecoder().decode(encodedValue);
-                String decodedString = new String(decodedBytes, charset);
-
-                // Проверяем, является ли результат декодирования UTF-8
-                if (StandardCharsets.UTF_8.equals(charset)) {
-                    return decodedString;
+                String decodedString = new String(byteArray, charset);
+                for(Charset charset1: charsetsToCheck){
+                    String newString = new String(byteArray, charset1);
+                    System.out.println(newString);
+                    if(newString.startsWith("Поздравляем")) {
+                        return newString;
+                    }
                 }
-            } catch (IllegalArgumentException e) {
-                // Произошла ошибка при декодировании, продолжаем проверку с другой кодировкой
-                continue;
+
+                // Проверяем, является ли декодированная строка валидной JSON-строкой
+                JSONObject jsonObject = new JSONObject(decodedString);
+
+                // Если JSON-парсинг прошел успешно, возвращаем декодированное значение
+                return decodedString;
+            } catch (org.json.JSONException ignored) {
+                // Произошла ошибка при декодировании или парсинге JSON, продолжаем проверку с другой кодировкой
             }
         }
 
-        // Если не удалось найти кодировку UTF-8, возвращаем null или генерируем исключение
+        // Если не удалось найти подходящую кодировку, возвращаем null или генерируем исключение
         return null; // Или генерируйте исключение, если нужно обработать ошибку
     }
+
 
     private int sendPostRequest(String decodedValue) {
         try {
