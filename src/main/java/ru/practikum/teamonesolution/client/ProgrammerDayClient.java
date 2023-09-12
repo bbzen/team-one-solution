@@ -23,11 +23,11 @@ import java.util.stream.Collectors;
 @Component
 public class ProgrammerDayClient {
     private String apiToken;
-    private final String url = "http://ya.praktikum.fvds.ru:8080/dev-day/task/3";
+    private final String url = "http://ya.praktikum.fvds.ru:8080/dev-day/task/4";
     private final HttpClient client= HttpClient.newHttpClient();
    // private final TaskService taskService;
     private final Gson gson = Util.getGson();
-    private final String regex = "<code id=\"message\"><span>\\{&quot;encoded&quot;:\\s*&quot;(.+?)&quot;,\\s*&quot;offset&quot;:\\s*&quot;(\\d+)&quot;\\}</span></code>";
+    private final String regex = "<code id=\\\"congratulation\\\"><span>(.+)</span></code></p>";
 
     public String register() {
         HttpRequest request = HttpRequest.newBuilder(URI.create(url))
@@ -46,10 +46,8 @@ public class ProgrammerDayClient {
 
             if (matcher.find()) {
                 String encoded = matcher.group(1);
-                int offset = Integer.parseInt(matcher.group(2));
 
-                String decoded = Decoder.decode(encoded, offset);
-                return decoded;
+                return encoded;
             } else {
                 throw new RuntimeException("JSON not found in HTML.");
             }
@@ -68,8 +66,10 @@ public class ProgrammerDayClient {
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             System.out.println(response.statusCode());
-            password.setStatus(response.statusCode());
-            password.setJson(response.body());
+            if (response.statusCode() == 200) {
+                password.setJson(response.body());
+                password.setStatus(response.statusCode());
+            }
 
             return password;
         } catch (IOException | InterruptedException e) {
