@@ -14,7 +14,9 @@ public class TeamOneSolutionApplication {
         String[] chars = new String[]{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D",
                 "E", "F", "a", "b", "c", "d", "e", "f"};
         ProgrammerDayClient programmerDayClient = new ProgrammerDayClient();
-        System.out.println(generateCombinations(chars, programmerDayClient));
+        String dataToSend = "{\"congratulation\": \"" + programmerDayClient.getTask().getJson() + "\"}";
+        System.out.println(dataToSend);
+        System.out.println(programmerDayClient.sendAnswer(dataToSend));
     }
 
 
@@ -26,7 +28,7 @@ public class TeamOneSolutionApplication {
         for (int i = 0; i <= 8; i++) {
             builder.append(0);
             String data = "{\"answer\": \"" + builder + "\"}";
-            answer = programmerDayClient.getTask(data);
+//            answer = programmerDayClient.getTask(data);
             if (isPromptGreaterThan(answer.getJson())) {
                 builder.delete(i, i + 1);
                 break;
@@ -41,7 +43,7 @@ public class TeamOneSolutionApplication {
                 int middle = (left + right) / 2;
                 builder.replace(i, i + 1, chars[middle]);
                 String data = "{\"answer\": \"" + builder + "\"}";
-                answer = programmerDayClient.getTask(data);
+//                answer = programmerDayClient.getTask(data);
                 if (answer.getStatus() == 200) {
                     return answer;
                 }
@@ -51,7 +53,7 @@ public class TeamOneSolutionApplication {
                     left = middle;
                     builder.replace(i, i + 1, chars[middle + 1]);
                     String data1 = "{\"answer\": \"" + builder + "\"}";
-                    answer = programmerDayClient.getTask(data1);
+//                    answer = programmerDayClient.getTask(data1);
                     if (answer.getStatus() == 200) {
                         return answer;
                     }
